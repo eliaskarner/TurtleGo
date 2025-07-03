@@ -100,21 +100,31 @@ class TurtleController(Node):
 
         self.cmd_vel_pub.publish(twist)
 
-    def should_turn_again(self):
-        # after escape, check if turtle is still facing the wall
+   def should_turn_again(self):
         if self.last_wall is None:
             return False
-
+    
         theta = self.pose.theta
-        if self.last_wall == 'left' and math.cos(theta) <= 0:
-            return True
-        elif self.last_wall == 'right' and math.cos(theta) >= 0:
-            return True
-        elif self.last_wall == 'bottom' and math.sin(theta) <= 0:
-            return True
-        elif self.last_wall == 'top' and math.sin(theta) >= 0:
-            return True
-        return False
+        x, y = self.pose.x, self.pose.y
+        margin = 0.5  # reuse same margin as in control_loop
+        safe_distance = 0.7  # slightly beyond the margin
+    
+        if self.last_wall == 'left':
+            facing_wall = math.cos(theta) <= 0
+            too_close = x < safe_distance
+        elif self.last_wall == 'right':
+            facing_wall = math.cos(theta) >= 0
+            too_close = x > 11.08 - safe_distance
+        elif self.last_wall == 'bottom':
+            facing_wall = math.sin(theta) <= 0
+            too_close = y < safe_distance
+        elif self.last_wall == 'top':
+            facing_wall = math.sin(theta) >= 0
+            too_close = y > 11.08 - safe_distance
+        else:
+            return False
+    
+        return too_close and facing_wall
 
     def detect_wall(self, x, y, margin):
         # return which wall we hit
