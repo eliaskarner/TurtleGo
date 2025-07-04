@@ -10,7 +10,9 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        ('share/' + package_name + '/launch', ['launch/turtle_start.launch.py']),
+            ('share/' + package_name + '/launch', [
+            'launch/turtlesim_automata.launch.py'
+        ]),
     ],
     install_requires=['setuptools','rclpy', 'turtlesim', 'geometry_msgs'],
     zip_safe=True,
